@@ -1,7 +1,9 @@
 using GraphResolvingSets
 using Documenter
 
-DocMeta.setdocmeta!(GraphResolvingSets, :DocTestSetup, :(using GraphResolvingSets); recursive=true)
+DocMeta.setdocmeta!(
+    GraphResolvingSets, :DocTestSetup, :(using GraphResolvingSets); recursive=true
+)
 
 makedocs(;
     modules=[GraphResolvingSets],
@@ -14,12 +16,7 @@ makedocs(;
         edit_link="main",
         assets=String[],
     ),
-    pages=[
-        "Home" => "index.md",
-    ],
+    pages=["Home" => "index.md"],
 )
 
-deploydocs(;
-    repo="github.com/gdalle/GraphResolvingSets.jl",
-    devbranch="main",
-)
+deploydocs(; repo="github.com/gdalle/GraphResolvingSets.jl", devbranch="main")
