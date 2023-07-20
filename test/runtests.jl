@@ -19,11 +19,11 @@ using Test
         end
     end
 
-    @testset verbose = true "Metric dimension" begin
-        include("metric_dimension.jl")
+    @testset verbose = true "Dimensions" begin
+        include("dimensions.jl")
     end
 
-    @testset verbose = true "Strong metric dimension" begin
-        include("strong_metric_dimension.jl")
+    @testset verbose = true "Sets" begin
+        include("sets.jl")
     end
 end
