@@ -8,8 +8,6 @@
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 [![JET](https://img.shields.io/badge/%E2%9C%88%EF%B8%8F%20tested%20with%20-%20JET.jl%20-%20red)](https://github.com/aviatesk/JET.jl)
 
-
-
 > This is an experimental package and the interface is not yet stable. If you find something wrong or missing, please open an issue!
 
 Take a look at the [documentation](https://gdalle.github.io/GraphResolvingSets.jl/dev/) to know more!

@@ -18,4 +18,12 @@ using Test
             JET.test_package(GraphResolvingSets; target_defined_modules=true)
         end
     end
+
+    @testset verbose = true "Metric dimension" begin
+        include("metric_dimension.jl")
+    end
+
+    @testset verbose = true "Strong metric dimension" begin
+        include("strong_metric_dimension.jl")
+    end
 end
