@@ -19,11 +19,15 @@ using Test
         end
     end
 
-    @testset verbose = true "Dimensions" begin
+    @testset verbose = true "Metric dimensions" begin
         include("dimensions.jl")
     end
 
-    @testset verbose = true "Sets" begin
+    @testset verbose = true "Resolving sets" begin
         include("sets.jl")
+    end
+
+    @testset verbose = true "Isomorphism tests" begin
+        include("isomorphism.jl")
     end
 end

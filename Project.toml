@@ -4,20 +4,25 @@ authors = ["Guillaume Dalle <22795598+gdalle@users.noreply.github.com> and contr
 version = "0.1.0"
 
 [deps]
+FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 HiGHS = "87dc4568-4c63-4d18-b0c0-bb2238e4078b"
 JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MathOptInterface = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
 SimpleUnPack = "ce78b400-467f-4804-87d8-8f486da07d0a"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
+FillArrays = "1.4"
 Graphs = "1.8"
 HiGHS = "1.5"
 JuMP = "1.12"
 MathOptInterface = "1.18"
 SimpleUnPack = "1.1"
 SpecialFunctions = "2.3"
+StatsBase = "0.34"
 julia = "1.6"
 
 [extras]

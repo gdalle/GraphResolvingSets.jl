@@ -1,5 +1,6 @@
-function check_strong_resolving_set(R, g::AbstractGraph)
-    d = johnson_shortest_paths(g).dists
+function check_strong_resolving_set(
+    R, g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g)
+)
     for i in 1:nv(g), j in 1:(i - 1)
         strongly_resolved = false
         for r in R
@@ -24,13 +25,14 @@ function maximally_distant(g, i, j, d)
     return true
 end
 
-function strong_resolving_graph(g::AbstractGraph)
+function strong_resolving_graph(
+    g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g)
+)
     if is_directed(g)
         throw(
             ArgumentError("Strong metric dimension is only defined for undirected graphs.")
         )
     end
-    d = johnson_shortest_paths(g).dists
     srg = SimpleGraph(nv(g))
     for i in 1:nv(g), j in 1:(i - 1)
         if maximally_distant(g, i, j, d) && maximally_distant(g, j, i, d)
@@ -56,19 +58,25 @@ function minimum_vertex_cover_ilp(g::AbstractGraph; fractional=false)
     return model
 end
 
-function smallest_strong_resolving_set_ilp(g::AbstractGraph; kwargs...)
-    srg = strong_resolving_graph(g)
+function smallest_strong_resolving_set_ilp(
+    g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g); kwargs...
+)
+    srg = strong_resolving_graph(g, d)
     return minimum_vertex_cover_ilp(srg; kwargs...)
 end
 
-function smallest_strong_resolving_set(g::AbstractGraph; kwargs...)
-    model = smallest_strong_resolving_set_ilp(g; kwargs...)
+function smallest_strong_resolving_set(
+    g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g); kwargs...
+)
+    model = smallest_strong_resolving_set_ilp(g, d; kwargs...)
     x = value.(model[:x])
     SR = filter(r -> x[r] > eps(), eachindex(x))
     return sort(SR)
 end
 
-function strong_metric_dimension(g::AbstractGraph; kwargs...)
-    model = smallest_strong_resolving_set_ilp(g; kwargs...)
+function strong_metric_dimension(
+    g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g); kwargs...
+)
+    model = smallest_strong_resolving_set_ilp(g, d; kwargs...)
     return objective_value(model)
 end

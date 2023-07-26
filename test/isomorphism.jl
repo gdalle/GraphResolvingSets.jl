@@ -1,7 +1,25 @@
 using GraphResolvingSets
+using GraphResolvingSets: fig_2a, fig_2b, fig_2c, fig_2d
 using Graphs
 using Test
 
-for (g1, g2) in [example_c9(2, 2), example_c9(4, 1), example_c9(1, 4), example_c10(4)]
-    @test isomorphism_test(WL(), g1, g2)
+@testset "WL" begin
+    for (g1, g2) in [fig_2a(), fig_2b(), fig_2c(), fig_2d()]
+        @test isomorphism_test(WL(), g1, g2)
+    end
+end
+
+@testset "SPD-WL" begin
+    for (g1, g2) in [fig_2a(), fig_2b(), fig_2d()]
+        @test !isomorphism_test(SPDWL(), g1, g2)
+    end
+    for (g1, g2) in [fig_2c()]
+        @test isomorphism_test(SPDWL(), g1, g2)
+    end
+end
+
+@testset "SPDRD-WL" begin
+    for (g1, g2) in [fig_2a(), fig_2b(), fig_2c(), fig_2d()]
+        @test !isomorphism_test(SPDRDWL(), g1, g2)
+    end
 end

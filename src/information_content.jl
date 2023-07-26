@@ -1,4 +1,4 @@
-function entropy(R, g::AbstractGraph, d::AbstractMatrix)
+function entropy(R::AbstractVector, g::AbstractGraph, d::AbstractMatrix)
     n = nv(g)
     e = 0.0
     for i in 1:n
@@ -20,8 +20,9 @@ function entropy(R, g::AbstractGraph, d::AbstractMatrix)
     return e
 end
 
-function approximate_smallest_resolving_set(g::AbstractGraph)
-    d = johnson_shortest_paths(g).dists
+function approximate_smallest_resolving_set(
+    g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g)
+)
     R = Int[]
     current_e = entropy(R, g, d)
     while current_e > eps()
@@ -47,7 +48,9 @@ function approximate_smallest_resolving_set(g::AbstractGraph)
     return sort(R)
 end
 
-function approximate_metric_dimension(g::AbstractGraph)
-    R = approximate_smallest_resolving_set(g)
+function approximate_metric_dimension(
+    g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g)
+)
+    R = approximate_smallest_resolving_set(g, d)
     return length(R)
 end
