@@ -4,7 +4,7 @@ abstract type AbstractGDWL <: AbstractWL end
 struct WL <: AbstractWL end
 struct SPDWL <: AbstractGDWL end
 struct RDWL <: AbstractGDWL end
-struct SPDRDWL <: AbstractGDWL end
+struct GDWL <: AbstractGDWL end
 
 function messages(::WL, g, v, c, d)
     return (c[v], sort([c[u] for u in neighbors(g, v)]))
@@ -18,7 +18,7 @@ distances(::WL, g::AbstractGraph) = Fill(nothing, nv(g), nv(g))
 distances(::SPDWL, g::AbstractGraph) = shortest_path_distances(g)
 distances(::RDWL, g::AbstractGraph) = resistance_distances(g)
 
-function distances(::SPDRDWL, g::AbstractGraph)
+function distances(::GDWL, g::AbstractGraph)
     return collect(zip(shortest_path_distances(g), resistance_distances(g)))
 end
 
@@ -36,11 +36,10 @@ function color_refinement(
     c = ones(Int, nv(g))
     c_prehash = [messages(algo, g, v, c, d) for v in vertices(g)]
     while true
-        L = unique(c_prehash)
-        length(L) == maximum(c) && break
-        sort!(L)
+        H = approx_unique_sorted(c_prehash)
+        length(H) == maximum(c) && break
         for v in vertices(g)
-            c[v] = searchsortedfirst(L, c_prehash[v])
+            c[v] = approx_searchsortedfirst(H, c_prehash[v])
         end
         for v in vertices(g)
             c_prehash[v] = messages(algo, g, v, c, d)

@@ -17,11 +17,14 @@ Compute the matrix of all-pairs resistance distances using a connection with the
 - Equation 2 of _Resistance distance and Laplacian spectrum_ (Xiao and Gutman, 2003, https://link.springer.com/article/10.1007/s00214-003-0460-4)
 """
 function resistance_distances(g)
+    n = nv(g)
     L = laplacian_matrix(g)
-    L⁺ = pinv(Matrix(L))
-    d = similar(L⁺)
-    for i in axes(L⁺, 1), j in axes(L⁺, 2)
-        d[i, j] = L⁺[i, i] + L⁺[j, j] - L⁺[i, j] - L⁺[j, i]
+    # L⁺ = pinv(Matrix(L))
+    M = pinv(Matrix(L) .+ 1 ./ n)
+    d = similar(M)
+    for i in 1:n, j in 1:n
+        # d[i, j] = L⁺[i, i] + L⁺[j, j] - L⁺[i, j] - L⁺[j, i]
+        d[i, j] = M[i, i] + M[j, j] - M[i, j] - M[j, i]
     end
     return d
 end
