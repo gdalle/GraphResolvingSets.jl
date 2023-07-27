@@ -4,43 +4,49 @@ using Graphs
 using Test
 
 @testset "WL" begin
+    alg = StandardWL()
     for (g1, g2) in [fig_2a(), fig_2b(), fig_2c(), fig_2d(), fig_12a(), fig_12b()]
-        @test isomorphism_test(WL(), g1, g2)
+        @test isomorphism_test(alg, g1, g2)
     end
 end
 
 @testset "SPD-WL" begin
-    for (g1, g2) in [fig_2a(), fig_2b(), fig_2d()]
-        @test !isomorphism_test(SPDWL(), g1, g2)
-    end
-    for (g1, g2) in [fig_2c(), fig_12a(), fig_12b()]
-        @test isomorphism_test(SPDWL(), g1, g2)
+    alg_dense = DistanceWL(; distances=UseShortestPathDistances(), anchors=UseAllVertices())
+    alg_sparse = DistanceWL(;
+        distances=UseShortestPathDistances(), anchors=UseResolvingSet()
+    )
+    for alg in (alg_dense, alg_sparse)
+        for (g1, g2) in [fig_2a(), fig_2b(), fig_2d()]
+            @test !isomorphism_test(alg, g1, g2)
+        end
+        for (g1, g2) in [fig_2c(), fig_12a(), fig_12b()]
+            @test isomorphism_test(alg, g1, g2)
+        end
     end
 end
 
 @testset "RD-WL" begin
-    for (g1, g2) in [fig_2a(), fig_2b(), fig_2c(), fig_2d(), fig_12a()]
-        @test !isomorphism_test(RDWL(), g1, g2)
-    end
-    for m in 1:10, k in 1:10
-        k * m >= 3 || continue
-        (g1, g2) = GraphResolvingSets.example_c9(m, k)
-        @test !isomorphism_test(RDWL(), g1, g2)
-    end
-    for m in 3:10
-        (g1, g2) = GraphResolvingSets.example_c10(m)
-        @test !isomorphism_test(RDWL(), g1, g2)
-    end
-    for (g1, g2) in [fig_12b()]
-        @test isomorphism_test(RDWL(), g1, g2)
+    alg_dense = DistanceWL(; distances=UseResistanceDistances(), anchors=UseAllVertices())
+    alg_sparse = DistanceWL(; distances=UseResistanceDistances(), anchors=UseResolvingSet())
+    for alg in (alg_dense, alg_sparse)
+        for (g1, g2) in [fig_2a(), fig_2b(), fig_2c(), fig_2d(), fig_12a()]
+            @test !isomorphism_test(alg, g1, g2)
+        end
+        for (g1, g2) in [fig_12b()]
+            @test isomorphism_test(alg, g1, g2)
+        end
     end
 end
 
 @testset "GD-WL" begin
-    for (g1, g2) in [fig_2a(), fig_2b(), fig_2c(), fig_2d(), fig_12a()]
-        @test !isomorphism_test(GDWL(), g1, g2)
-    end
-    for (g1, g2) in [fig_12b()]
-        @test isomorphism_test(GDWL(), g1, g2)
+    alg_dense = DistanceWL(; distances=UseBothDistances(), anchors=UseAllVertices())
+    alg_sparse = DistanceWL(; distances=UseBothDistances(), anchors=UseResolvingSet())
+    for alg in (alg_dense, alg_sparse)
+        for (g1, g2) in [fig_2a(), fig_2b(), fig_2c(), fig_2d(), fig_12a()]
+            @test !isomorphism_test(alg, g1, g2)
+        end
+        for (g1, g2) in [fig_12b()]
+            @test isomorphism_test(alg, g1, g2)
+        end
     end
 end

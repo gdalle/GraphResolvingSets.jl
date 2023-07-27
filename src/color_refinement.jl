@@ -2,38 +2,31 @@
 
 abstract type AbstractDistanceChoice end
 
-struct ShortestPathDistances <: AbstractDistanceChoice end
-struct ResistanceDistances <: AbstractDistanceChoice end
-struct BothDistances <: AbstractDistanceChoice end
+struct UseShortestPathDistances <: AbstractDistanceChoice end
+struct UseResistanceDistances <: AbstractDistanceChoice end
+struct UseBothDistances <: AbstractDistanceChoice end
 
-compute_distances(::ShortestPathDistances, g) = shortest_path_distances(g)
-compute_distances(::ResistanceDistances, g) = resistance_distances(g)
+compute_distances(::UseShortestPathDistances, g) = shortest_path_distances(g)
+compute_distances(::UseResistanceDistances, g) = resistance_distances(g)
 
-function compute_distances(::BothDistances, g)
+function compute_distances(::UseBothDistances, g)
     return collect(zip(shortest_path_distances(g), resistance_distances(g)))
 end
-
-## Messages
-
-abstract type AbstractSourceChoice end
-
-struct OnlyNeighbors <: AbstractSourceChoice end
-struct OnlyAnchors <: AbstractSourceChoice end
-struct NeighborsAndAnchors <: AbstractSourceChoice end
-
-get_sources(::OnlyNeighbors, g; v, a) = neighbors(g, v)
-get_sources(::OnlyAnchors, g; v, a) = a
-get_sources(::NeighborsAndAnchors, g; v, a) = union(a, neighbors(g, v))
 
 ## Anchors
 
 abstract type AbstractAnchorChoice end
 
-struct AllVertices <: AbstractAnchorChoice end
-struct ResolvingSet <: AbstractAnchorChoice end
+struct UseAllVertices <: AbstractAnchorChoice end
+struct UseResolvingSet <: AbstractAnchorChoice end
 
-compute_anchors(::AllVertices, g; d) = vertices(g)
-compute_anchors(::ResolvingSet, g; d) = error("not implemented")
+compute_anchors(::UseAllVertices, g; d) = vertices(g)
+
+function compute_anchors(::UseResolvingSet, g; d)
+    return approximate_smallest_resolving_set(
+        g, d; unordered=true, permutation_invariant=true
+    )
+end
 
 ## Algorithm settings
 
@@ -41,22 +34,17 @@ abstract type AbstractWL end
 
 struct StandardWL <: AbstractWL end
 
-@kwdef struct GeneralizedDistanceWL{
-    D<:AbstractDistanceChoice,A<:AbstractAnchorChoice,S<:AbstractSourceChoice
-} <: AbstractWL
+@kwdef struct DistanceWL{D<:AbstractDistanceChoice,A<:AbstractAnchorChoice} <: AbstractWL
     distances::D
     anchors::A
-    sources::S
 end
 
 function messages(::StandardWL, g; v, c, kwargs...)
-    us = neighbors(g, v)
-    return (c[v], sort([c[u] for u in us]))
+    return (c[v], sort([c[u] for u in neighbors(g, v)]))
 end
 
-function messages(alg::GeneralizedDistanceWL, g; v, c, d, a)
-    us = get_sources(alg.sources, g; v, a)
-    return sort([(c[u], d[v, u]) for u in us])
+function messages(::DistanceWL, g; v, c, d, a)
+    return sort([(c[u], d[v, u]) for u in a])
 end
 
 ## Actual color refinement
@@ -89,7 +77,7 @@ function color_refinement(alg::StandardWL, g::AbstractGraph)
     return color_refinement(alg, g; d=nothing, a=nothing)
 end
 
-function color_refinement(alg::GeneralizedDistanceWL, g::AbstractGraph)
+function color_refinement(alg::DistanceWL, g::AbstractGraph)
     d = compute_distances(alg.distances, g)
     a = compute_anchors(alg.anchors, g; d)
     return color_refinement(alg, g; d, a)
@@ -108,26 +96,4 @@ function isomorphism_test(alg::AbstractWL, g1::AbstractGraph, g2::AbstractGraph)
     c1 = c[begin:nv(g1)]
     c2 = c[(nv(g1) + 1):end]
     return countmap(c1) == countmap(c2)
-end
-
-## Shortcuts
-
-WL() = StandardWL()
-
-function SPDWL()
-    return GeneralizedDistanceWL(;
-        distances=ShortestPathDistances(), anchors=AllVertices(), sources=OnlyAnchors()
-    )
-end
-
-function RDWL()
-    return GeneralizedDistanceWL(;
-        distances=ResistanceDistances(), anchors=AllVertices(), sources=OnlyAnchors()
-    )
-end
-
-function GDWL()
-    return GeneralizedDistanceWL(;
-        distances=BothDistances(), anchors=AllVertices(), sources=OnlyAnchors()
-    )
 end
