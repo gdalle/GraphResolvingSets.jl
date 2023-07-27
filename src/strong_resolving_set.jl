@@ -28,11 +28,6 @@ end
 function strong_resolving_graph(
     g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g)
 )
-    if is_directed(g)
-        throw(
-            ArgumentError("Strong metric dimension is only defined for undirected graphs.")
-        )
-    end
     srg = SimpleGraph(nv(g))
     for i in 1:nv(g), j in 1:(i - 1)
         if maximally_distant(g, i, j, d) && maximally_distant(g, j, i, d)

@@ -31,34 +31,27 @@ function partition_entropy(
 end
 
 function approximate_smallest_resolving_set(
-    g::AbstractGraph,
-    d::AbstractMatrix=shortest_path_distances(g);
-    unordered=false,
-    permutation_invariant=false,
+    g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g); unordered=false
 )
     R = Int[]
     current_e = partition_entropy(R, g, d; unordered)
     while current_e > eps()
         best_e = current_e
-        best_rs = Int[]
+        best_r = 0
         for r in 1:nv(g)
             r in R && continue
             push!(R, r)
             e = partition_entropy(R, g, d; unordered)
             pop!(R)
-            if e ≈ best_e
-                if permutation_invariant
-                    push!(best_rs, r)  # get them all
-                end
-            elseif e < best_e
+            if e < best_e
                 best_e = e
-                best_rs = [r]
+                best_r = r
             end
         end
-        if isempty(best_rs)
+        if best_r == 0
             break
         else
-            append!(R, best_rs)
+            push!(R, best_r)
             current_e = partition_entropy(R, g, d; unordered)
         end
     end

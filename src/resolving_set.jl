@@ -18,10 +18,6 @@ end
 function smallest_resolving_set_ilp(
     g::AbstractGraph, d::AbstractMatrix=shortest_path_distances(g); fractional=false
 )
-    if is_directed(g)
-        throw(ArgumentError("Metric dimension is only defined for undirected graphs."))
-    end
-
     model = Model(HiGHS.Optimizer; add_bridges=false)
     set_silent(model)
     @variable(model, 0 <= x[r=1:nv(g)] <= 1, binary = !fractional)

@@ -23,9 +23,8 @@ struct UseResolvingSet <: AbstractAnchorChoice end
 compute_anchors(::UseAllVertices, g; d) = vertices(g)
 
 function compute_anchors(::UseResolvingSet, g; d)
-    return approximate_smallest_resolving_set(
-        g, d; unordered=true, permutation_invariant=true
-    )
+    R = equivariant_unordered_resolving_set(g, d)
+    return R === nothing ? vertices(g) : R
 end
 
 ## Algorithm settings
@@ -80,6 +79,9 @@ end
 function color_refinement(alg::DistanceWL, g::AbstractGraph)
     d = compute_distances(alg.distances, g)
     a = compute_anchors(alg.anchors, g; d)
+    if length(a) < nv(g)
+        @info "Using $(length(a)) anchors out of $(nv(g)) vertices"
+    end
     return color_refinement(alg, g; d, a)
 end
 
