@@ -4,8 +4,8 @@ function check_strong_resolving_set(
     for i in 1:nv(g), j in 1:(i - 1)
         strongly_resolved = false
         for r in R
-            if (d[r, j] ≈ d[r, i] + d[i, j]) ||  # i in the middle
-                (d[r, i] ≈ d[r, j] + d[j, i])  # j in the middle
+            if recursive_isapprox(d[r, j], d[r, i] + d[i, j]) ||  # i in the middle
+                recursive_isapprox(d[r, i], d[r, j] + d[j, i])  # j in the middle
                 strongly_resolved = true
             end
         end

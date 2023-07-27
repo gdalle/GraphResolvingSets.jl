@@ -2,16 +2,19 @@ function entropy(R::AbstractVector, g::AbstractGraph, d::AbstractMatrix)
     n = nv(g)
     e = 0.0
     for i in 1:n
+        d_Ri = view(d, R, i)
         new_class = true
         for j in 1:(i - 1)
-            if view(d, R, i) ≈ view(d, R, j)
+            d_Rj = view(d, R, j)
+            if recursive_isapprox(d_Ri, d_Rj)
                 new_class = false
             end
         end
         new_class || continue
         A = 1
         for j in (i + 1):n
-            if view(d, R, i) ≈ view(d, R, j)
+            d_Rj = view(d, R, j)
+            if recursive_isapprox(d_Ri, d_Rj)
                 A += 1
             end
         end

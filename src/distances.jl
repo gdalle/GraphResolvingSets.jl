@@ -19,12 +19,10 @@ Compute the matrix of all-pairs resistance distances using a connection with the
 function resistance_distances(g)
     n = nv(g)
     L = laplacian_matrix(g)
-    # L⁺ = pinv(Matrix(L))
-    M = pinv(Matrix(L) .+ 1 ./ n)
-    d = similar(M)
+    L⁺ = pinv(Matrix(L))
+    d = similar(L⁺)
     for i in 1:n, j in 1:n
-        # d[i, j] = L⁺[i, i] + L⁺[j, j] - L⁺[i, j] - L⁺[j, i]
-        d[i, j] = M[i, i] + M[j, j] - M[i, j] - M[j, i]
+        d[i, j] = L⁺[i, i] + L⁺[j, j] - L⁺[i, j] - L⁺[j, i]
     end
     return d
 end

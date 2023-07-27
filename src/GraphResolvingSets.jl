@@ -15,6 +15,7 @@ export check_resolving_set, check_strong_resolving_set
 export smallest_resolving_set, smallest_strong_resolving_set
 export metric_dimension, strong_metric_dimension
 export approximate_smallest_resolving_set, approximate_metric_dimension
+export StandardWL, GeneralizedDistanceWL
 export WL, SPDWL, RDWL, GDWL
 export color_refinement, isomorphism_test
 

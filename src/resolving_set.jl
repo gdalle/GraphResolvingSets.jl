@@ -4,7 +4,7 @@ function check_resolving_set(
     for i in 1:nv(g), j in 1:(i - 1)
         resolved = false
         for r in R
-            if !(d[i, r] ≈ d[j, r])
+            if !recursive_isapprox(d[i, r], d[j, r])
                 resolved = true
             end
         end
@@ -30,7 +30,7 @@ function smallest_resolving_set_ilp(
     for i in 1:nv(g), j in 1:(i - 1)
         possible_resolvers = AffExpr(0.0)
         for r in 1:nv(g)
-            if !(d[i, r] ≈ d[j, r])
+            if !recursive_isapprox(d[i, r], d[j, r])
                 add_to_expression!(possible_resolvers, x[r])
             end
         end
